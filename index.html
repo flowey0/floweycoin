@@ -10,8 +10,19 @@
             text-align: center;
             margin-top: 50px;
         }
-        #login, #register, #game, #score, #leaderboard {
+        #login, #register, #game, #score, #leaderboard, #usersTable {
             display: none;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
@@ -47,7 +58,15 @@
         <button id="logoutButton">Выйти</button>
         <h2>Список лидеров</h2>
         <button id="refreshLeaderboard">Обновить список лидеров</button>
-        <ul id="leaderboard"></ul>
+        <table id="usersTable">
+            <thead>
+                <tr>
+                    <th>Никнейм</th>
+                    <th>Монеты</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard"></tbody>
+        </table>
     </div>
 
     <script>
@@ -68,6 +87,7 @@
         const refreshLeaderboardButton = document.getElementById('refreshLeaderboard');
         const loginMessage = document.getElementById('loginMessage');
         const registerMessage = document.getElementById('registerMessage');
+        const usersTable = document.getElementById('usersTable');
 
         let coinCount = 0;
         let currentUser = null;
@@ -98,9 +118,14 @@
             }
             users.sort((a, b) => b.coins - a.coins);
             users.forEach(user => {
-                const li = document.createElement('li');
-                li.textContent = `${user.nickname}: ${user.coins} монет`;
-                leaderboard.appendChild(li);
+                const tr = document.createElement('tr');
+                const nicknameTd = document.createElement('td');
+                const coinsTd = document.createElement('td');
+                nicknameTd.textContent = user.nickname;
+                coinsTd.textContent = user.coins;
+                tr.appendChild(nicknameTd);
+                tr.appendChild(coinsTd);
+                leaderboard.appendChild(tr);
             });
         };
 
