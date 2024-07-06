@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра с монетами</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #login, #register, #game, #score {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Добро пожаловать в игру с монетами!</h1>
+
+    <div id="auth">
+        <button id="loginButton">Вход в аккаунт</button>
+        <button id="registerButton">Регистрация</button>
+    </div>
+
+    <div id="login">
+        <h2>Вход в аккаунт</h2>
+        <input type="text" id="loginNickname" placeholder="Никнейм"><br><br>
+        <input type="password" id="loginPassword" placeholder="Пароль"><br><br>
+        <button id="loginSubmit">Войти</button>
+        <p id="loginMessage"></p>
+    </div>
+
+    <div id="register">
+        <h2>Регистрация</h2>
+        <input type="text" id="registerNickname" placeholder="Никнейм"><br><br>
+        <input type="password" id="registerPassword" placeholder="Пароль"><br><br>
+        <button id="registerSubmit">Зарегистрироваться</button>
+        <p id="registerMessage"></p>
+    </div>
+
+    <div id="game">
+        <p>Нажимайте на кнопку, чтобы получать монеты!</p>
+        <button id="coinButton">Получить монету</button>
+        <p id="score">Монеты: <span id="coinCount">0</span></p>
+        <button id="logoutButton">Выйти</button>
+    </div>
+
+    <script>
+        const authDiv = document.getElementById('auth');
+        const loginDiv = document.getElementById('login');
+        const registerDiv = document.getElementById('register');
+        const gameDiv = document.getElementById('game');
+        const loginButton = document.getElementById('loginButton');
+        const registerButton = document.getElementById('registerButton');
+        const loginSubmit = document.getElementById('loginSubmit');
+        const registerSubmit = document.getElementById('registerSubmit');
+        const logoutButton = document.getElementById('logoutButton');
+        const coinButton = document.getElementById('coinButton');
+        const scoreDisplay = document.getElementById('score');
+        const coinCountSpan = document.getElementById('coinCount');
+        const loginMessage = document.getElementById('loginMessage');
+        const registerMessage = document.getElementById('registerMessage');
+
+        let coinCount = 0;
+        let currentUser = null;
+
+        const showDiv = (div) => {
+            authDiv.style.display = 'none';
+            loginDiv.style.display = 'none';
+            registerDiv.style.display = 'none';
+            gameDiv.style.display = 'none';
+            scoreDisplay.style.display = 'none';
+            div.style.display = 'block';
+        };
+
+        const hashCode = (str) => {
+            return str.split('').reduce((prevHash, currVal) =>
+                ((prevHash << 5) - prevHash) + currVal.charCodeAt(0), 0);
+        };
+
+        loginButton.addEventListener('click', () => {
+            showDiv(loginDiv);
+        });
+
+        registerButton.addEventListener('click', () => {
+            showDiv(registerDiv);
+        });
+
+        loginSubmit.addEventListener('click', () => {
+            const nickname = document.getElementById('loginNickname').value;
+            const password = document.getElementById('loginPassword').value;
+            const hashedPassword = hashCode(password).toString();
+            const user = JSON.parse(localStorage.getItem(nickname));
+
+            if (user && user.password === hashedPassword) {
+                currentUser = nickname;
+                coinCount = user.coins;
+                coinCountSpan.textContent = coinCount;
+                showDiv(gameDiv);
+                scoreDisplay.style.display = 'block';
+            } else {
+                loginMessage.textContent = 'Неправильный никнейм или пароль';
+            }
+        });
+
+        registerSubmit.addEventListener('click', () => {
+            const nickname = document.getElementById('registerNickname').value;
+            const password = document.getElementById('registerPassword').value;
+            const hashedPassword = hashCode(password).toString();
+
+            if (localStorage.getItem(nickname)) {
+                registerMessage.textContent = 'Пользователь с таким никнеймом уже существует';
+            } else {
+                localStorage.setItem(nickname, JSON.stringify({ password: hashedPassword, coins: 0 }));
+                registerMessage.textContent = 'Регистрация успешна, теперь вы можете войти в аккаунт';
+            }
+        });
+
+        coinButton.addEventListener('click', () => {
+            coinCount++;
+            coinCountSpan.textContent = coinCount;
+            const user = JSON.parse(localStorage.getItem(currentUser));
+            user.coins = coinCount;
+            localStorage.setItem(currentUser, JSON.stringify(user));
+        });
+
+        logoutButton.addEventListener('click', () => {
+            currentUser = null;
+            coinCount = 0;
+            coinCountSpan.textContent = coinCount;
+            showDiv(authDiv);
+        });
+
+        if (localStorage.getItem('currentUser')) {
+            currentUser = localStorage.getItem('currentUser');
+            const user = JSON.parse(localStorage.getItem(currentUser));
+            coinCount = user.coins;
+            coinCountSpan.textContent = coinCount;
+            showDiv(gameDiv);
+            scoreDisplay.style.display = 'block';
+        } else {
+            showDiv(authDiv);
+        }
+    </script>
+</body>
+</html>
