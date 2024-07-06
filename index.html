@@ -24,6 +24,13 @@
         th {
             background-color: #f2f2f2;
         }
+        .version {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -69,6 +76,8 @@
         </table>
     </div>
 
+    <div class="version" id="versionDisplay">Версия 1</div>
+
     <script>
         const authDiv = document.getElementById('auth');
         const loginDiv = document.getElementById('login');
@@ -88,6 +97,7 @@
         const loginMessage = document.getElementById('loginMessage');
         const registerMessage = document.getElementById('registerMessage');
         const usersTable = document.getElementById('usersTable');
+        const versionDisplay = document.getElementById('versionDisplay');
 
         let coinCount = 0;
         let currentUser = null;
@@ -202,6 +212,13 @@
         } else {
             showDiv(authDiv);
         }
+
+        // Увеличение версии при каждом изменении кода
+        let versionNumber = 1; // начальная версия
+        setInterval(() => {
+            versionNumber++;
+            versionDisplay.textContent = `Версия ${versionNumber}`;
+        }, 10000); // изменение версии каждые 10 секунд (для тестирования)
     </script>
 </body>
 </html>
