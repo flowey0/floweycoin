@@ -10,7 +10,7 @@
             text-align: center;
             margin-top: 50px;
         }
-        #login, #register, #game, #score {
+        #login, #register, #game, #score, #leaderboard {
             display: none;
         }
     </style>
@@ -43,7 +43,10 @@
         <p>Нажимайте на кнопку, чтобы получать монеты!</p>
         <button id="coinButton">Получить монету</button>
         <p id="score">Монеты: <span id="coinCount">0</span></p>
+        <button id="shopButton">Магазин</button>
         <button id="logoutButton">Выйти</button>
+        <h2>Список лидеров</h2>
+        <ul id="leaderboard"></ul>
     </div>
 
     <script>
@@ -59,6 +62,8 @@
         const coinButton = document.getElementById('coinButton');
         const scoreDisplay = document.getElementById('score');
         const coinCountSpan = document.getElementById('coinCount');
+        const shopButton = document.getElementById('shopButton');
+        const leaderboard = document.getElementById('leaderboard');
         const loginMessage = document.getElementById('loginMessage');
         const registerMessage = document.getElementById('registerMessage');
 
@@ -77,6 +82,24 @@
         const hashCode = (str) => {
             return str.split('').reduce((prevHash, currVal) =>
                 ((prevHash << 5) - prevHash) + currVal.charCodeAt(0), 0);
+        };
+
+        const updateLeaderboard = () => {
+            leaderboard.innerHTML = '';
+            const users = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const user = JSON.parse(localStorage.getItem(key));
+                if (user && user.coins !== undefined) {
+                    users.push({ nickname: key, coins: user.coins });
+                }
+            }
+            users.sort((a, b) => b.coins - a.coins);
+            users.forEach(user => {
+                const li = document.createElement('li');
+                li.textContent = `${user.nickname}: ${user.coins} монет`;
+                leaderboard.appendChild(li);
+            });
         };
 
         loginButton.addEventListener('click', () => {
@@ -99,6 +122,7 @@
                 coinCountSpan.textContent = coinCount;
                 showDiv(gameDiv);
                 scoreDisplay.style.display = 'block';
+                updateLeaderboard();
             } else {
                 loginMessage.textContent = 'Неправильный никнейм или пароль';
             }
@@ -123,6 +147,7 @@
             const user = JSON.parse(localStorage.getItem(currentUser));
             user.coins = coinCount;
             localStorage.setItem(currentUser, JSON.stringify(user));
+            updateLeaderboard();
         });
 
         logoutButton.addEventListener('click', () => {
@@ -132,6 +157,10 @@
             showDiv(authDiv);
         });
 
+        shopButton.addEventListener('click', () => {
+            alert("Магазин еще не доступен!");
+        });
+
         if (localStorage.getItem('currentUser')) {
             currentUser = localStorage.getItem('currentUser');
             const user = JSON.parse(localStorage.getItem(currentUser));
@@ -139,6 +168,7 @@
             coinCountSpan.textContent = coinCount;
             showDiv(gameDiv);
             scoreDisplay.style.display = 'block';
+            updateLeaderboard();
         } else {
             showDiv(authDiv);
         }
