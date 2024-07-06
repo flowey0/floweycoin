@@ -46,6 +46,7 @@
         <button id="shopButton">Магазин</button>
         <button id="logoutButton">Выйти</button>
         <h2>Список лидеров</h2>
+        <button id="refreshLeaderboard">Обновить список лидеров</button>
         <ul id="leaderboard"></ul>
     </div>
 
@@ -64,6 +65,7 @@
         const coinCountSpan = document.getElementById('coinCount');
         const shopButton = document.getElementById('shopButton');
         const leaderboard = document.getElementById('leaderboard');
+        const refreshLeaderboardButton = document.getElementById('refreshLeaderboard');
         const loginMessage = document.getElementById('loginMessage');
         const registerMessage = document.getElementById('registerMessage');
 
@@ -122,7 +124,6 @@
                 coinCountSpan.textContent = coinCount;
                 showDiv(gameDiv);
                 scoreDisplay.style.display = 'block';
-                updateLeaderboard();
             } else {
                 loginMessage.textContent = 'Неправильный никнейм или пароль';
             }
@@ -147,7 +148,6 @@
             const user = JSON.parse(localStorage.getItem(currentUser));
             user.coins = coinCount;
             localStorage.setItem(currentUser, JSON.stringify(user));
-            updateLeaderboard();
         });
 
         logoutButton.addEventListener('click', () => {
@@ -161,6 +161,10 @@
             alert("Магазин еще не доступен!");
         });
 
+        refreshLeaderboardButton.addEventListener('click', () => {
+            updateLeaderboard();
+        });
+
         if (localStorage.getItem('currentUser')) {
             currentUser = localStorage.getItem('currentUser');
             const user = JSON.parse(localStorage.getItem(currentUser));
@@ -168,7 +172,6 @@
             coinCountSpan.textContent = coinCount;
             showDiv(gameDiv);
             scoreDisplay.style.display = 'block';
-            updateLeaderboard();
         } else {
             showDiv(authDiv);
         }
