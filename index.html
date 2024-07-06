@@ -149,6 +149,7 @@
                 coinCountSpan.textContent = coinCount;
                 showDiv(gameDiv);
                 scoreDisplay.style.display = 'block';
+                updateLeaderboard();
             } else {
                 loginMessage.textContent = 'Неправильный никнейм или пароль';
             }
@@ -197,6 +198,7 @@
             coinCountSpan.textContent = coinCount;
             showDiv(gameDiv);
             scoreDisplay.style.display = 'block';
+            updateLeaderboard();
         } else {
             showDiv(authDiv);
         }
